@@ -4,6 +4,11 @@
 *.exe.manifest
 lanshare
 lanshare.exe
+dist/
+
+# Test scripts & temporary test files
+test_simulated_network.bat
+*.test
 
 # OS generated files
 .DS_Store
