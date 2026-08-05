@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LANShare - Yüksek Hızlı Yerel Ağ Dosya Paylaşımı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <span class="aero-orb">🌐</span>
+        </div>
+        <div>
+          <h1 class="logo-title">LANShare</h1>
+          <span class="logo-subtitle" id="device-info-subtitle">Cihaz tespit ediliyor...</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <nav class="nav-tabs">
+          <button class="nav-btn active" data-tab="tab-radar" id="txt-nav-radar">
+            📡 Radar
+          </button>
+          <button class="nav-btn" data-tab="tab-history" id="txt-nav-history">
+            📜 Geçmiş
+            <span class="badge" id="history-count">0</span>
+          </button>
+          <button class="nav-btn" data-tab="tab-settings" id="txt-nav-settings">
+            ⚙️ Ayarlar
+          </button>
+        </nav>
+
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Koyu/Açık Tema Değiştir">
+          <span id="theme-icon">🌙</span>
+          <span id="theme-label" class="theme-label">Koyu</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-viewport">
+
+      <!-- TAB 1: RADAR & DRAG-N-DROP -->
+      <section id="tab-radar" class="tab-pane active">
+        <div class="radar-container">
+          <div class="radar-status-tag" id="radar-status-tag">📡 Yakındaki cihazlar aranıyor...</div>
+          
+          <div class="radar-scan-line"></div>
+          <div class="radar-wave wave-1"></div>
+          <div class="radar-wave wave-2"></div>
+          <div class="radar-wave wave-3"></div>
+
+          <div class="self-node">
+            <div class="self-icon" id="self-os-icon">💻</div>
+            <div class="self-label" id="self-device-name">Cihazım</div>
+            <div class="self-sub" id="self-ip">Taranıyor...</div>
+          </div>
+
+          <div id="peer-grid" class="peer-grid">
+            <!-- Dynamically populated online peer nodes -->
+          </div>
+        </div>
+
+        <!-- Drag & Drop Overlay Zone -->
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-content">
+            <div class="drop-icon">
+              <span class="aero-drop-icon">📂</span>
+            </div>
+            <h3 class="drop-title" id="txt-drop-title">Dosya veya Klasörleri Buraya Bırakın</h3>
+            <p class="drop-subtitle" id="txt-drop-subtitle">Yukarıdan hedef bir cihaz seçin veya dosyaları buraya sürükleyin</p>
+            
+            <div class="drop-actions">
+              <label class="btn btn-primary" for="file-input" id="txt-btn-browse">
+                📄 Dosya Seç
+              </label>
+              <input type="file" id="file-input" multiple style="display:none">
+
+              <label class="btn btn-secondary" for="folder-input" id="txt-btn-folder">
+                📁 Klasör Seç
+              </label>
+              <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Transfers Panel -->
+        <div id="active-transfers" class="active-transfers-panel hidden">
+          <div class="panel-header-row">
+            <h3 class="panel-header" id="txt-live-transfers">⚡ Canlı Transferler</h3>
+            <span class="aero-pulse-dot"></span>
+          </div>
+          <div id="transfers-list" class="transfers-list">
+            <!-- Active transfer progress cards rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: TRANSFER HISTORY -->
+      <section id="tab-history" class="tab-pane">
+        <div class="glass-card history-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title" id="txt-history-title">📜 Transfer Geçmişi</h2>
+              <p class="card-subtitle" id="txt-history-subtitle">Gelen ve giden tüm dosyaların kayıtları</p>
+            </div>
+            <div class="card-actions">
+              <button id="open-downloads-btn" class="btn btn-secondary">
+                📁 İndirilenler Klasörünü Aç
+              </button>
+              <button id="clear-history-btn" class="btn btn-danger-ghost">
+                🗑️ Geçmişi Temizle
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th id="th-file">Dosya / Klasör</th>
+                  <th id="th-direction">Yön</th>
+                  <th id="th-peer">Karşı Cihaz</th>
+                  <th id="th-size">Boyut</th>
+                  <th id="th-speed">Hız</th>
+                  <th id="th-status">Durum</th>
+                  <th id="th-date">Tarih & Saat</th>
+                  <th id="th-action">İşlem</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <!-- Records dynamically populated -->
+              </tbody>
+            </table>
+            <div id="history-empty" class="empty-state">
+              <div class="empty-icon">📂</div>
+              <p id="txt-history-empty">Henüz kaydedilmiş transfer geçmişi yok.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SETTINGS -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="glass-card settings-card">
+          <h2 class="card-title" id="txt-settings-title">⚙️ Cihaz ve Transfer Ayarları</h2>
+          <p class="card-subtitle" id="txt-settings-subtitle">Bu makinedeki LANShare davranışını özelleştirin</p>
+
+          <form id="settings-form" class="settings-form">
+            <div class="form-group">
+              <label for="setting-lang" id="txt-label-lang">🌐 Dil / Language</label>
+              <select id="setting-lang" class="form-control">
+                <option value="tr">Türkçe (TR)</option>
+                <option value="en">English (US)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="setting-name" id="txt-label-name">Cihaz Takma Adı (Nickname)</label>
+              <input type="text" id="setting-name" class="form-control" placeholder="Örn: MacBook Pro">
+              <small class="form-help" id="txt-help-name">Bu isim yakındaki ağ cihazlarına yayınlanacaktır.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="setting-dir" id="txt-label-dir">Varsayılan İndirme Klasörü</label>
+              <div class="input-group">
+                <input type="text" id="setting-dir" class="form-control" placeholder="/Users/username/Downloads/LANShare">
+                <button type="button" id="setting-open-dir-btn" class="btn btn-secondary">📁 Klasörü Aç</button>
+              </div>
+              <small class="form-help" id="txt-help-dir">Gelen dosyaların diskinize kaydedileceği yer.</small>
+            </div>
+
+            <div class="form-group switch-group">
+              <div>
+                <label class="switch-label" id="txt-label-e2ee">🔒 Uçtan Uca Şifreleme (E2EE)</label>
+                <p class="form-help" id="txt-help-e2ee">Aktarılan veriyi yerel ağda göndermeden önce AES-256-GCM ile şifreler.</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="setting-e2ee" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="form-group switch-group">
+              <div>
+                <label class="switch-label" id="txt-label-auto-accept">⚡ Transferleri Otomatik Kabul Et</label>
+                <p class="form-help" id="txt-help-auto-accept">Gelen dosya isteklerini onay penceresi sormadan otomatik kabul eder.</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="setting-auto-accept">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="txt-btn-save">💾 Ayarları Kaydet</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- INCOMING TRANSFER PROMPT MODAL -->
+    <div id="incoming-modal" class="modal-overlay hidden">
+      <div class="glass-card modal-card">
+        <div class="modal-badge" id="txt-modal-badge">📲 Gelen Dosya İsteği</div>
+        <div class="modal-icon">🌐</div>
+        <h3 id="modal-peer-name" class="modal-title">DESKTOP-123</h3>
+        <p id="modal-peer-sub" class="modal-sub">size bir dosya göndermek istiyor</p>
+
+        <div class="file-details-box">
+          <div class="file-icon" id="modal-file-icon">📄</div>
+          <div class="file-meta">
+            <span id="modal-file-name" class="file-name">document.pdf</span>
+            <span id="modal-file-size" class="file-size">45.8 MB</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="modal-decline-btn" class="btn btn-danger">❌ Reddet</button>
+          <button id="modal-accept-btn" class="btn btn-success">✅ Kabul Et & İndir</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
